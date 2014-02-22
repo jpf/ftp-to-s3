@@ -54,7 +54,7 @@ def process_file(filename):
     print("Request made: {}".format(r))
 
 
-class TwilioFTPWorker(threading.Thread):
+class FTPWorker(threading.Thread):
     def __init__(self, q):
         self.q = q
         threading.Thread.__init__(self)
@@ -73,7 +73,7 @@ class TwilioFTPWorker(threading.Thread):
             print "Task done, qsize: %s" % str(job_queue.qsize())
 
 
-class TwilioFTPHandler(FTPHandler):
+class FTPHandler(FTPHandler):
     def on_file_received(self, filename):
         job_queue.put(filename)
 
@@ -91,7 +91,7 @@ def main():
     # authorizer.add_anonymous(os.getcwd())
 
     # Instantiate FTP handler class
-    handler = TwilioFTPHandler
+    handler = FTPHandler
     handler.authorizer = authorizer
 
     # Define a customized banner (string returned when client connects)
@@ -110,7 +110,7 @@ def main():
 
 if __name__ == '__main__':
     for i in range(0, 4):
-        t = TwilioFTPWorker(job_queue)
+        t = FTPWorker(job_queue)
         t.daemon = True
         t.start()
         print "Started worker"
